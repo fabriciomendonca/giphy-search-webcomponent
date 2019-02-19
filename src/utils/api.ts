@@ -33,15 +33,13 @@ const apiService: (apiKey: string) => GiphyApiService = (apiKey: string) => {
       let endpoint = ENDPOINTS.SEARCH;
 
       let response;
-      const params = encodeURIComponent(
-        `?api_key=${
-          this.apiKey
-        }&q=${query}&limit=${limit}&offset=${offset}&rating=${rating}&lang=${lang}`,
-      );
+      const params = `?api_key=${this.apiKey}&q=${encodeURIComponent(
+        query,
+      )}&limit=${limit}&offset=${offset}&rating=${rating}&lang=${lang}`;
 
       try {
-        response = fetch(endpoint + params);
-        response = response.json();
+        response = await fetch(endpoint + params);
+        response = await response.json();
       } catch (err) {
         throw err;
       }
