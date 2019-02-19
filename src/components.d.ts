@@ -12,58 +12,64 @@ import '@stencil/core';
 
 export namespace Components {
 
-  interface MyComponent {
-    /**
-    * The first name
-    */
-    'first': string;
-    /**
-    * The last name
-    */
-    'last': string;
-    /**
-    * The middle name
-    */
-    'middle': string;
+  interface GsGiflist {
+    'gifs': any;
   }
-  interface MyComponentAttributes extends StencilHTMLAttributes {
-    /**
-    * The first name
-    */
-    'first'?: string;
-    /**
-    * The last name
-    */
-    'last'?: string;
-    /**
-    * The middle name
-    */
-    'middle'?: string;
+  interface GsGiflistAttributes extends StencilHTMLAttributes {
+    'gifs'?: any;
+  }
+
+  interface GsGifsearch {}
+  interface GsGifsearchAttributes extends StencilHTMLAttributes {}
+
+  interface GsSearchbox {}
+  interface GsSearchboxAttributes extends StencilHTMLAttributes {
+    'onSubmit-search'?: (event: CustomEvent) => void;
   }
 }
 
 declare global {
   interface StencilElementInterfaces {
-    'MyComponent': Components.MyComponent;
+    'GsGiflist': Components.GsGiflist;
+    'GsGifsearch': Components.GsGifsearch;
+    'GsSearchbox': Components.GsSearchbox;
   }
 
   interface StencilIntrinsicElements {
-    'my-component': Components.MyComponentAttributes;
+    'gs-giflist': Components.GsGiflistAttributes;
+    'gs-gifsearch': Components.GsGifsearchAttributes;
+    'gs-searchbox': Components.GsSearchboxAttributes;
   }
 
 
-  interface HTMLMyComponentElement extends Components.MyComponent, HTMLStencilElement {}
-  var HTMLMyComponentElement: {
-    prototype: HTMLMyComponentElement;
-    new (): HTMLMyComponentElement;
+  interface HTMLGsGiflistElement extends Components.GsGiflist, HTMLStencilElement {}
+  var HTMLGsGiflistElement: {
+    prototype: HTMLGsGiflistElement;
+    new (): HTMLGsGiflistElement;
+  };
+
+  interface HTMLGsGifsearchElement extends Components.GsGifsearch, HTMLStencilElement {}
+  var HTMLGsGifsearchElement: {
+    prototype: HTMLGsGifsearchElement;
+    new (): HTMLGsGifsearchElement;
+  };
+
+  interface HTMLGsSearchboxElement extends Components.GsSearchbox, HTMLStencilElement {}
+  var HTMLGsSearchboxElement: {
+    prototype: HTMLGsSearchboxElement;
+    new (): HTMLGsSearchboxElement;
   };
 
   interface HTMLElementTagNameMap {
-    'my-component': HTMLMyComponentElement
+    'gs-giflist': HTMLGsGiflistElement
+    'gs-gifsearch': HTMLGsGifsearchElement
+    'gs-searchbox': HTMLGsSearchboxElement
   }
 
   interface ElementTagNameMap {
-    'my-component': HTMLMyComponentElement;
+    'gs-giflist': HTMLGsGiflistElement;
+    'gs-gifsearch': HTMLGsGifsearchElement;
+    'gs-searchbox': HTMLGsSearchboxElement;
   }
 
 
