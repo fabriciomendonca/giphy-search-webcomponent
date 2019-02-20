@@ -1,6 +1,7 @@
 import { Component, Prop } from '@stencil/core';
 
 @Component({
+  styleUrl: './gs-giflist.scss',
   tag: 'gs-giflist',
 })
 export class GsGifList {
@@ -12,8 +13,8 @@ export class GsGifList {
         {this.gifs.map(gif => (
           <div key={gif.id}>
             <picture>
-              <source type="image/webp" srcSet={gif.images.fixed_height.webp} />
-              <img src={gif.images.fixed_height.url} alt={gif.title} />
+              <source type="image/webp" srcSet={gif.images.fixed_width.webp} />
+              <img src={gif.images.fixed_width.url} alt={gif.title} />
             </picture>
           </div>
         ))}
