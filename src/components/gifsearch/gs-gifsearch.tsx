@@ -2,6 +2,7 @@ import { Component, Listen, State } from '@stencil/core';
 import { GiphyApiExposer, apiExposer } from '../../utils/api';
 
 @Component({
+  styleUrl: './gs-gifsearch.scss',
   tag: 'gs-gifsearch',
 })
 export class GsGifSearch {
@@ -53,10 +54,10 @@ export class GsGifSearch {
 
   render() {
     return (
-      <div>
+      <section class="gs-main">
         <gs-searchbox />
         <gs-giflist gifs={this.gifs} />
-      </div>
+      </section>
     );
   }
 }
