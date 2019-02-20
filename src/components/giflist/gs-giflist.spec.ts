@@ -15,7 +15,7 @@ describe('Main component', () => {
     const vdata = component.render();
 
     expect(vdata).toBeDefined();
-    expect(vdata.vtag).toBe('div');
+    expect(vdata.vtag).toBeUndefined;
   });
 
   it('renders a list with 3 elements', () => {

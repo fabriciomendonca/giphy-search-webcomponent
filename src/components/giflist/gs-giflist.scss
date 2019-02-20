@@ -1,16 +1,33 @@
 gs-giflist {
-  background-color: #f4f4f8;
+  background-color: #e8e8eb;
   box-sizing: border-box;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
   display: flex;
 
   div {
-    margin: 16px 0;
+    margin: 32px 0;
+    position: relative;
     width: 320px;
-
     picture,
     img {
       width: 320px;
+    }
+    ul {
+      list-style: none;
+      background: rgba(45, 45, 46, 0.8);
+      bottom: 4px;
+      position: absolute;
+      width: 100%;
+      li {
+        padding: 8px;
+        a {
+          display: block;
+          width: 20px;
+          svg {
+            fill: #e8e8eb;
+          }
+        }
+      }
     }
   }
 
