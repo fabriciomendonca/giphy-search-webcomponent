@@ -20,7 +20,7 @@ export class GsGifSearch {
     let data = await this.api.getImages(this.query, {
       lang: 'en',
       limit: 10,
-      offset: this.page - 1,
+      offset: (this.page - 1) * 10,
       rating: 'g',
     });
 
