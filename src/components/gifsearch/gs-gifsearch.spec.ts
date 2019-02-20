@@ -70,4 +70,32 @@ describe('Main component', () => {
     expect(component.page).toBe(1);
     expect(spy).not.toHaveBeenCalled();
   });
+
+  it('runs componentDidUpdate and call a new page for big screens', async () => {
+    const spy = jest
+      .fn()
+      .mockImplementation(() => Promise.resolve((<any>mocks).data));
+    component.componentWillLoad();
+    component.api.getImages = spy;
+    await component.loadImages();
+    await component.componentDidUpdate();
+
+    expect(component.page).toBe(2);
+    expect(spy).toHaveBeenCalledTimes(2);
+  });
+
+  it('runs componentDidUpdate and do NOT call a new page for big screens', async () => {
+    const spy = jest
+      .fn()
+      .mockImplementation(() => Promise.resolve((<any>mocks).data));
+    
+    component.shouldUpdate = false;
+    component.componentWillLoad();
+    component.api.getImages = spy;
+    await component.loadImages();
+    await component.componentDidUpdate();
+
+    expect(component.page).toBe(1);
+    expect(spy).toHaveBeenCalledTimes(1);
+  });
 });

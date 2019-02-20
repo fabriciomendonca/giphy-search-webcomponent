@@ -8,6 +8,7 @@ import { GiphyApiExposer, apiExposer } from '../../utils/api';
 export class GsGifSearch {
   private api: GiphyApiExposer;
   private page = 1;
+  private shouldUpdate = true;
 
   @State() gifs = [];
   @State() query = '';
@@ -23,15 +24,35 @@ export class GsGifSearch {
       offset: (this.page - 1) * 10,
       rating: 'g',
     });
-
+    
     this.gifs = [...this.gifs, ...data];
+
+    return data;
   }
+
+  async componentDidUpdate() {
+    const {innerHeight, offsetHeight} = this.getBottomValues();
+
+    // Loads next page for big screens
+    if(offsetHeight <= innerHeight && this.gifs.length > 0 && this.shouldUpdate) {
+      const data = await this.updatePage();
+      
+      this.shouldUpdate = data.length > 0;
+    }
+  }
+
+  async updatePage() {
+    this.page += 1;
+    return await this.loadImages();
+  }
+
 
   @Listen('submit-search')
   async onSubmitSearch(e) {
+    this.page = 1;
     this.gifs = [];
     this.query = e.detail;
-    await this.loadImages();
+    return await this.loadImages();
   }
 
   getBottomValues() {
@@ -44,11 +65,11 @@ export class GsGifSearch {
   @Listen('window:scroll')
   async onWindowScroll() {
     const { innerHeight, offsetHeight, scrollTop } = this.getBottomValues();
+    
     const bottom = scrollTop + innerHeight === offsetHeight;
 
     if (bottom) {
-      this.page += 1;
-      await this.loadImages();
+      await this.updatePage();
     }
   }
 
