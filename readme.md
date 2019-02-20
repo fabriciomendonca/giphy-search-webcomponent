@@ -2,13 +2,19 @@
 
 # Giphy Search Web Component
 
+This web component searches and shows animated Gif's from the GIPHY public API in an infinite scroll container.
+
+The usage of Stenciljs for generating the Web Component brings the possibility of, instead of only an stand-alone application, to use it also as a widget in any website/application. And it is IE11+ compatible! :D
+
+It will load `10` Gif's at a time, incrementing the page every time the scroll reaches the bottom of the page.
+
 ## Getting Started
 
-To start building a new web component using Stencil, clone this repo to a new directory:
+To start building the Giphy Search component, clone this repo to a new directory:
 
 ```bash
-git clone https://github.com/ionic-team/stencil-component-starter.git my-component
-cd my-component
+git clone https://github.com/fabriciomendonca/giphy-search-webcomponent.git giphy-search-webcomponent
+cd giphy-search-webcomponent
 git remote rm origin
 ```
 
@@ -31,4 +37,15 @@ To run the unit tests for the components, run:
 npm test
 ```
 
-## Using this component
+## Running the dev server
+
+To run the development environtment, just run `npm start` after running `npm install`.
+
+It will open the browser with HMR on port (default) `3333`.
+
+## Next steps for this project
+
+- Improve performance of the infinite scroll, rendering only a small set of the loaded pages and discarding elements that is too far away from what is being shown;
+- Make the infinite scroll relative to the component container, so people can use it as a widget;
+- Add more actions to the actions bar in the bottom of each gif, like `copy link`, `share` and so on;
+- Create option to show the list in a three columns per row way.
