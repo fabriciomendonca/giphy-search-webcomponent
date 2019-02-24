@@ -29,8 +29,8 @@
     "@stencil/core": "~0.16.2",
     "@stencil/sass": "^0.1.1",
     "@types/jest": "23.3.14",
-    "jest": "^24.1.0",
-    "jest-cli": "^24.1.0"
+    "jest": "23.6.0",
+    "jest-cli": "23.6.0"
   },
   "license": "MIT"
 }
