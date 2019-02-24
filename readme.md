@@ -6,7 +6,7 @@ This web component searches and shows animated Gif's from the GIPHY public API i
 
 The usage of Stenciljs for generating the Web Component brings the possibility of, instead of only an stand-alone application, to use it also as a widget in any website/application. And it is IE11+ compatible! :D
 
-It will load `10` Gif's at a time, incrementing the page every time the scroll reaches the bottom of the page.
+It will load `10` Gif's at a time, incrementing the page every time the scroll reaches the bottom of the page. You can change the amount of gifs per page setting the property `gif-per-page` on the component.
 
 ## Getting Started
 
@@ -43,9 +43,84 @@ To run the development environtment, just run `npm start` after running `npm ins
 
 It will open the browser with HMR on port (default) `3333`.
 
+## Usage
+
+### Serving the JS File
+
+Clone this repo.
+
+```bash
+git clone https://github.com/fabriciomendonca/giphy-search-webcomponent.git giphy-search-webcomponent
+cd giphy-search-webcomponent
+git remote rm origin
+```
+
+After building the project for production with `npm run build`, you can coppy the `/dist` folder to your server.
+
+```HTML
+<script src="/component_pro_folder/giphysearch.js"></script>
+<gs-gifsearch api-key="YOR_GIPHY_API_KEY" gifs-per-page="10">
+```
+
+### As a dependency for React or VueJS
+
+Install the Giphy Search Web Component as a dependency.
+
+```bash
+npm i -S giphy-search-web-component
+```
+
+####
+
+For React apps, edit your `index.js` file
+
+```javascript
+import React from 'react';
+import ReactDOM from 'react-dom';
+import './index.css';
+import App from './App';
+import * as serviceWorker from './serviceWorker';
+
+// Add this line to import the component loader
+import { defineCustomElements } from 'giphy-search-web-component/dist/loader';
+
+ReactDOM.render(<App />, document.getElementById('root'));
+
+// If you want your app to work offline and load faster, you can change
+// unregister() to register() below. Note this comes with some pitfalls.
+// Learn more about service workers: http://bit.ly/CRA-PWA
+serviceWorker.unregister();
+
+// Add this line to define the component on the window scope
+defineCustomElements(window);
+```
+
+And use it as an HTML custom tag on your JSX files
+
+```javascript
+import React, { Component } from 'react';
+
+class App extends Component {
+  render() {
+    return (
+      <div className='App'>
+        <gs-gifsearch api-key='YOUR_API_KEY' gifs-per-page='10' />
+      </div>
+    );
+  }
+}
+
+export default App;
+```
+
+See Stenciljs docs for integration with other frameworks and libraries at https://stenciljs.com/docs/overview
+
 ## Next steps for this project
 
 - Improve performance of the infinite scroll, rendering only a small set of the loaded pages and discarding elements that is too far away from what is being shown;
-- Make the infinite scroll relative to the component container, so people can use it as a widget;
 - Add more actions to the actions bar in the bottom of each gif, like `copy link`, `share` and so on;
 - Create option to show the list in a three columns per row way.
+
+## GIPHY API Docs
+
+https://developers.giphy.com/docs/
