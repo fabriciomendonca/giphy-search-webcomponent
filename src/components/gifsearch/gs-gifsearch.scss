@@ -1,12 +1,11 @@
 gs-gifsearch {
+  font-family: sans-serif;
   .gs-main {
     align-items: center;
-    background-color: #2d2d2e;
+    background-color: #2e2d2d;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    font-family: sans-serif;
-    min-height: 100%;
     margin: 0;
     padding: 0;
     width: 100%;
@@ -14,5 +13,15 @@ gs-gifsearch {
     * {
       box-sizing: border-box;
     }
+  }
+
+  .error {
+    background: lightgray;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.8);
+    color: #881405;
+    font-weight: bold;
+    padding: 16px;
+    text-align: center;
+    width: 100%;
   }
 }

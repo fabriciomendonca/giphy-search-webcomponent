@@ -1,4 +1,4 @@
-import { Component, Element, Listen, State, Prop } from '@stencil/core';
+import { Component, Element, Listen, State, Prop, Watch } from '@stencil/core';
 import { apiExposer } from '../../utils/api';
 import { GsGifList } from '../giflist/gs-giflist';
 import * as d from '../../utils/definitions';
@@ -11,7 +11,8 @@ export class GsGifSearch {
   private mainElement: HTMLElement;
   private api: d.GiphyApiExposer;
   private page = 1;
-  private shouldUpdateInitialList = false;
+  private shouldUpdateInitialList = true;
+  private fixedContainer = false;
 
   constructor() {
     this.onMainElementScroll = this.onMainElementScroll.bind(this);
@@ -19,6 +20,7 @@ export class GsGifSearch {
 
   @State() gifs = [];
   @State() query = '';
+  @State() error: Error;
   @Prop() apiKey: string;
   @Prop() gifsPerPage: number = 10;
   @Element() host: HTMLElement;
@@ -28,6 +30,12 @@ export class GsGifSearch {
   }
 
   componentDidLoad() {
+    if (this.gifsPerPage < 1) {
+      this.setError('gifsPerPage');
+    }
+    this.fixedContainer =
+      this.host.parentElement.clientHeight > this.mainElement.clientHeight;
+
     this.createListeners();
   }
 
@@ -67,13 +75,13 @@ export class GsGifSearch {
   }
 
   async componentDidUpdate() {
-    let { innerHeight, offsetHeight } = this.getBottomValues();
-
-    if (innerHeight === offsetHeight) {
-      const windowBotton = this.getBottomValues(true);
-      innerHeight = windowBotton.innerHeight;
-      offsetHeight = windowBotton.offsetHeight;
+    if (this.error) {
+      return;
     }
+
+    let { innerHeight, offsetHeight } = this.getBottomValues(
+      !this.fixedContainer,
+    );
 
     // Loads next page for big screens
     // If the screen is too high, the first 10 elements
@@ -96,7 +104,7 @@ export class GsGifSearch {
 
   async updatePage(): Promise<any> {
     this.page += 1;
-    await this.loadImages();
+    return await this.loadImages();
   }
 
   @Listen('submit-search')
@@ -123,18 +131,15 @@ export class GsGifSearch {
   }
 
   async onMainElementScroll() {
-    if (this.gifs.length === 0) {
+    if (!this.gifs || this.gifs.length === 0) {
       return;
     }
-    let { innerHeight, offsetHeight, scrollTop } = this.getBottomValues();
+    let { innerHeight, offsetHeight, scrollTop } = this.getBottomValues(
+      !this.fixedContainer,
+    );
     let inMiddle = false;
 
-    if (innerHeight === offsetHeight) {
-      const windowBotton = this.getBottomValues(true);
-      innerHeight = windowBotton.innerHeight;
-      offsetHeight = windowBotton.offsetHeight;
-      scrollTop = windowBotton.scrollTop;
-
+    if (!this.fixedContainer) {
       inMiddle =
         this.mainElement.offsetTop +
           this.mainElement.clientHeight +
@@ -157,7 +162,8 @@ export class GsGifSearch {
         );
     }
 
-    let bottom = scrollTop + innerHeight >= offsetHeight;
+    let bottom =
+      Math.floor(scrollTop + innerHeight) >= Math.floor(offsetHeight);
 
     // We should trigger update page only once
     // to avoid any unnecessary api calls
@@ -167,7 +173,31 @@ export class GsGifSearch {
     }
   }
 
+  //
+  @Watch('gifsPerPage')
+  onChangeGifsPerPage(value) {
+    if (value < 1) {
+      this.setError('gifsPerPage');
+    } else {
+      this.error = undefined;
+    }
+  }
+
+  setError(type) {
+    switch (type) {
+      case 'gifsPerPage':
+        this.error = new Error('Property gifs per page should be at least 1.');
+        break;
+    }
+
+    this.gifs = [];
+    this.query = '';
+  }
+
   render() {
+    if (this.error) {
+      return <p class='error'>{this.error.message}</p>;
+    }
     return (
       <section class='gs-main' ref={el => (this.mainElement = el)}>
         <gs-searchbox />
