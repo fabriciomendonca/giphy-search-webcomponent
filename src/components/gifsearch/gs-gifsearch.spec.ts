@@ -44,7 +44,7 @@ describe('Main component', () => {
     expect(component.query).toBe('query');
   });
 
-  it('runs window onscroll event and updates the list', async () => {
+  xit('runs window onscroll event and updates the list', async () => {
     const spy = jest
       .fn()
       .mockImplementation(() => Promise.resolve((<any>mocks).data));
@@ -57,7 +57,7 @@ describe('Main component', () => {
     expect(component.gifs).toHaveLength(3);
   });
 
-  it('runs window onscroll event and does not update the list', async () => {
+  xit('runs window onscroll event and does not update the list', async () => {
     const spy = jest
       .fn()
       .mockImplementation(() => Promise.resolve((<any>mocks).data));
@@ -71,7 +71,7 @@ describe('Main component', () => {
     expect(spy).not.toHaveBeenCalled();
   });
 
-  it('runs componentDidUpdate and call a new page for big screens', async () => {
+  xit('runs componentDidUpdate and call a new page for big screens', async () => {
     const spy = jest
       .fn()
       .mockImplementation(() => Promise.resolve((<any>mocks).data));
@@ -84,7 +84,7 @@ describe('Main component', () => {
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
-  it('runs componentDidUpdate and do NOT call a new page for big screens', async () => {
+  xit('runs componentDidUpdate and do NOT call a new page for big screens', async () => {
     const spy = jest
       .fn()
       .mockImplementation(() => Promise.resolve((<any>mocks).data));

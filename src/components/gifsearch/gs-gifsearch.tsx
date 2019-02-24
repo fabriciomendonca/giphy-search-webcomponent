@@ -1,4 +1,4 @@
-import { Component, Listen, State, Prop } from '@stencil/core';
+import { Component, Element, Listen, State, Prop } from '@stencil/core';
 import { apiExposer } from '../../utils/api';
 import { GsGifList } from '../giflist/gs-giflist';
 import * as d from '../../utils/definitions';
@@ -8,21 +8,53 @@ import * as d from '../../utils/definitions';
   tag: 'gs-gifsearch',
 })
 export class GsGifSearch {
+  private mainElement: HTMLElement;
   private api: d.GiphyApiExposer;
   private page = 1;
-  private shouldUpdateInitialList = true;
+  private shouldUpdateInitialList = false;
+
+  constructor() {
+    this.onMainElementScroll = this.onMainElementScroll.bind(this);
+  }
 
   @State() gifs = [];
   @State() query = '';
   @Prop() apiKey: string;
   @Prop() gifsPerPage: number = 10;
+  @Element() host: HTMLElement;
 
   componentWillLoad() {
     this.api = apiExposer(this.apiKey);
   }
 
-  async loadImages(q) {
-    let data = await this.api.getImages(q, {
+  componentDidLoad() {
+    this.createListeners();
+  }
+
+  componentDidUnload() {
+    this.destroyListeners();
+  }
+
+  createListeners() {
+    this.host.parentElement.addEventListener(
+      'scroll',
+      this.onMainElementScroll,
+    );
+
+    window.addEventListener('scroll', this.onMainElementScroll);
+  }
+
+  destroyListeners() {
+    this.host.parentElement.removeEventListener(
+      'scroll',
+      this.onMainElementScroll,
+    );
+
+    window.removeEventListener('scroll', this.onMainElementScroll);
+  }
+
+  async loadImages() {
+    let data = await this.api.getImages(this.query, {
       lang: 'en',
       limit: this.gifsPerPage,
       offset: (this.page - 1) * this.gifsPerPage,
@@ -35,7 +67,13 @@ export class GsGifSearch {
   }
 
   async componentDidUpdate() {
-    const { innerHeight, offsetHeight } = this.getBottomValues();
+    let { innerHeight, offsetHeight } = this.getBottomValues();
+
+    if (innerHeight === offsetHeight) {
+      const windowBotton = this.getBottomValues(true);
+      innerHeight = windowBotton.innerHeight;
+      offsetHeight = windowBotton.offsetHeight;
+    }
 
     // Loads next page for big screens
     // If the screen is too high, the first 10 elements
@@ -51,11 +89,14 @@ export class GsGifSearch {
       const data = await this.updatePage();
       this.shouldUpdateInitialList = data.length > 0;
     }
+
+    this.destroyListeners();
+    this.createListeners();
   }
 
-  async updatePage() {
+  async updatePage(): Promise<any> {
     this.page += 1;
-    return await this.loadImages('');
+    await this.loadImages();
   }
 
   @Listen('submit-search')
@@ -63,31 +104,72 @@ export class GsGifSearch {
     this.page = 1;
     this.gifs = [];
     this.query = e.detail;
-    return await this.loadImages(e.detail);
+    await this.loadImages();
   }
 
-  getBottomValues() {
-    return {
-      offsetHeight: document.documentElement.offsetHeight || 0,
-      scrollTop: document.documentElement.scrollTop || 0,
-      innerHeight: window.innerHeight || 0,
-    };
+  getBottomValues(isWindow = false) {
+    return isWindow
+      ? {
+          offsetHeight: document.documentElement.offsetHeight || 0,
+          scrollTop: document.documentElement.scrollTop || 0,
+          innerHeight: window.innerHeight || 0,
+        }
+      : {
+          offsetHeight: this.mainElement.getBoundingClientRect().height || 0,
+          scrollTop: this.host.parentElement.scrollTop || 0,
+          innerHeight:
+            this.host.parentElement.getBoundingClientRect().height || 0,
+        };
   }
 
-  @Listen('window:scroll')
-  async onWindowScroll() {
-    const { innerHeight, offsetHeight, scrollTop } = this.getBottomValues();
+  async onMainElementScroll() {
+    if (this.gifs.length === 0) {
+      return;
+    }
+    let { innerHeight, offsetHeight, scrollTop } = this.getBottomValues();
+    let inMiddle = false;
 
-    const bottom = scrollTop + innerHeight === offsetHeight;
+    if (innerHeight === offsetHeight) {
+      const windowBotton = this.getBottomValues(true);
+      innerHeight = windowBotton.innerHeight;
+      offsetHeight = windowBotton.offsetHeight;
+      scrollTop = windowBotton.scrollTop;
 
+      inMiddle =
+        this.mainElement.offsetTop +
+          this.mainElement.clientHeight +
+          parseFloat(
+            window.getComputedStyle(this.host.parentElement).marginBottom,
+          ) <
+        offsetHeight;
+    }
+
+    // There is a bottom margin outside the component parent
+    // or another element after the component in the DOM
+    // so the bottom of the page now is the bottom of the component
+    // container
+    if (inMiddle) {
+      offsetHeight =
+        this.mainElement.offsetTop +
+        this.mainElement.clientHeight +
+        parseFloat(
+          window.getComputedStyle(this.host.parentElement).marginBottom,
+        );
+    }
+
+    let bottom = scrollTop + innerHeight >= offsetHeight;
+
+    // We should trigger update page only once
+    // to avoid any unnecessary api calls
     if (bottom) {
+      this.destroyListeners();
       await this.updatePage();
     }
   }
 
   render() {
     return (
-      <section class="gs-main">
+      <section class='gs-main' ref={el => (this.mainElement = el)}>
         <gs-searchbox />
         <GsGifList gifs={this.gifs} />
       </section>
