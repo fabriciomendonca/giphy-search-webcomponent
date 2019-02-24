@@ -1,7 +1,11 @@
 {
+  "author": {
+    "name": "Fabricio Mendonça Rodrigues",
+    "url": "https://github.com/fabriciomendonca"
+  },
   "name": "giphy-search-web-component",
-  "version": "0.0.1",
-  "description": "Stencil Component Starter",
+  "version": "0.0.0",
+  "description": "This web component searches and shows animated Gif's from the GIPHY public API in an infinite scroll container.",
   "module": "dist/esm/index.js",
   "main": "dist/index.js",
   "unpkg": "dist/ionic.js",
@@ -10,6 +14,10 @@
   "files": [
     "dist/"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fabriciomendonca/giphy-search-webcomponent.git"
+  },
   "scripts": {
     "build": "stencil build --docs",
     "start": "stencil build --dev --watch --serve",
