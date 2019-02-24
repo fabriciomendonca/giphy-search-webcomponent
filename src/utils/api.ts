@@ -10,7 +10,6 @@ export interface GiphyApiGetOptions {
 }
 
 export interface GiphyApiService {
-  apiKey: string;
   fetchImages: (
     query: string,
     options: GiphyApiGetOptions,
@@ -18,22 +17,19 @@ export interface GiphyApiService {
 }
 
 export interface GiphyApiExposer {
-  apiKey: string;
   getImages: (
     query: string,
     options?: GiphyApiGetOptions,
   ) => Promise<GifObject[]>;
-  service: GiphyApiService;
 }
 
 const apiService: (apiKey: string) => GiphyApiService = (apiKey: string) => {
   return {
-    apiKey,
     async fetchImages(query, { lang, limit, offset, rating }) {
       let endpoint = ENDPOINTS.SEARCH;
 
       let response;
-      const params = `?api_key=${this.apiKey}&q=${encodeURIComponent(
+      const params = `?api_key=${apiKey}&q=${encodeURIComponent(
         query,
       )}&limit=${limit}&offset=${offset}&rating=${rating}&lang=${lang}`;
 
@@ -54,8 +50,6 @@ export const apiExposer: (apiKey: string) => GiphyApiExposer = (
 ) => {
   const service = apiService(apiKey);
   return {
-    apiKey,
-    service,
     getImages(
       query,
       { lang, limit, offset, rating } = {
@@ -65,7 +59,7 @@ export const apiExposer: (apiKey: string) => GiphyApiExposer = (
         rating: 'g',
       },
     ) {
-      if (!this.apiKey) {
+      if (!apiKey) {
         throw new Error(
           'You need a Giphy API Key, see https://developers.giphy.com/docs for details.',
         );

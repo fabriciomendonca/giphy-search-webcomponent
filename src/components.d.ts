@@ -12,15 +12,14 @@ import '@stencil/core';
 
 export namespace Components {
 
-  interface GsGiflist {
-    'gifs': any;
+  interface GsGifsearch {
+    'apiKey': string;
+    'gifsPerPage': number;
   }
-  interface GsGiflistAttributes extends StencilHTMLAttributes {
-    'gifs'?: any;
+  interface GsGifsearchAttributes extends StencilHTMLAttributes {
+    'apiKey'?: string;
+    'gifsPerPage'?: number;
   }
-
-  interface GsGifsearch {}
-  interface GsGifsearchAttributes extends StencilHTMLAttributes {}
 
   interface GsSearchbox {}
   interface GsSearchboxAttributes extends StencilHTMLAttributes {
@@ -30,23 +29,15 @@ export namespace Components {
 
 declare global {
   interface StencilElementInterfaces {
-    'GsGiflist': Components.GsGiflist;
     'GsGifsearch': Components.GsGifsearch;
     'GsSearchbox': Components.GsSearchbox;
   }
 
   interface StencilIntrinsicElements {
-    'gs-giflist': Components.GsGiflistAttributes;
     'gs-gifsearch': Components.GsGifsearchAttributes;
     'gs-searchbox': Components.GsSearchboxAttributes;
   }
 
-
-  interface HTMLGsGiflistElement extends Components.GsGiflist, HTMLStencilElement {}
-  var HTMLGsGiflistElement: {
-    prototype: HTMLGsGiflistElement;
-    new (): HTMLGsGiflistElement;
-  };
 
   interface HTMLGsGifsearchElement extends Components.GsGifsearch, HTMLStencilElement {}
   var HTMLGsGifsearchElement: {
@@ -61,13 +52,11 @@ declare global {
   };
 
   interface HTMLElementTagNameMap {
-    'gs-giflist': HTMLGsGiflistElement
     'gs-gifsearch': HTMLGsGifsearchElement
     'gs-searchbox': HTMLGsSearchboxElement
   }
 
   interface ElementTagNameMap {
-    'gs-giflist': HTMLGsGiflistElement;
     'gs-gifsearch': HTMLGsGifsearchElement;
     'gs-searchbox': HTMLGsSearchboxElement;
   }

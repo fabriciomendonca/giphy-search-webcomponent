@@ -1,58 +1,68 @@
-import { Component, Listen, State } from '@stencil/core';
+import { Component, Listen, State, Prop } from '@stencil/core';
 import { GiphyApiExposer, apiExposer } from '../../utils/api';
+import { GsGifList } from '../giflist/gs-giflist';
 
 @Component({
-  styleUrl: './gs-gifsearch.scss',
+  styleUrls: ['./gs-gifsearch.scss', '../giflist/gs-giflist.scss'],
   tag: 'gs-gifsearch',
 })
 export class GsGifSearch {
   private api: GiphyApiExposer;
   private page = 1;
-  private shouldUpdate = true;
+  private shouldUpdateInitialList = true;
 
   @State() gifs = [];
   @State() query = '';
+  @Prop() apiKey: string;
+  @Prop() gifsPerPage: number = 10;
 
   componentWillLoad() {
-    this.api = apiExposer('CdRKiCMbTnt9CkZTZ0lGukSczk6iT4Z6');
+    this.api = apiExposer(this.apiKey);
   }
 
-  async loadImages() {
-    let data = await this.api.getImages(this.query, {
+  async loadImages(q) {
+    let data = await this.api.getImages(q, {
       lang: 'en',
-      limit: 10,
-      offset: (this.page - 1) * 10,
+      limit: this.gifsPerPage,
+      offset: (this.page - 1) * this.gifsPerPage,
       rating: 'g',
     });
-    
+
     this.gifs = [...this.gifs, ...data];
 
     return data;
   }
 
   async componentDidUpdate() {
-    const {innerHeight, offsetHeight} = this.getBottomValues();
+    const { innerHeight, offsetHeight } = this.getBottomValues();
 
     // Loads next page for big screens
-    if(offsetHeight <= innerHeight && this.gifs.length > 0 && this.shouldUpdate) {
+    // If the screen is too high, the first 10 elements
+    // will not be enough for creating the infinite scroll
+    // so we need to manually trigger the updatePage method
+    // until we have a proper amount of elements rendered
+    // to generate the infinite scroll
+    if (
+      offsetHeight <= innerHeight &&
+      this.gifs.length > 0 &&
+      this.shouldUpdateInitialList
+    ) {
       const data = await this.updatePage();
-      
-      this.shouldUpdate = data.length > 0;
+      this.shouldUpdateInitialList = data.length > 0;
     }
   }
 
   async updatePage() {
     this.page += 1;
-    return await this.loadImages();
+    return await this.loadImages('');
   }
-
 
   @Listen('submit-search')
   async onSubmitSearch(e) {
     this.page = 1;
     this.gifs = [];
     this.query = e.detail;
-    return await this.loadImages();
+    return await this.loadImages(e.detail);
   }
 
   getBottomValues() {
@@ -62,10 +72,11 @@ export class GsGifSearch {
       innerHeight: window.innerHeight || 0,
     };
   }
+
   @Listen('window:scroll')
   async onWindowScroll() {
     const { innerHeight, offsetHeight, scrollTop } = this.getBottomValues();
-    
+
     const bottom = scrollTop + innerHeight === offsetHeight;
 
     if (bottom) {
@@ -77,7 +88,7 @@ export class GsGifSearch {
     return (
       <section class="gs-main">
         <gs-searchbox />
-        <gs-giflist gifs={this.gifs} />
+        <GsGifList gifs={this.gifs} />
       </section>
     );
   }
