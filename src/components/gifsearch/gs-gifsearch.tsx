@@ -1,13 +1,14 @@
 import { Component, Listen, State, Prop } from '@stencil/core';
-import { GiphyApiExposer, apiExposer } from '../../utils/api';
+import { apiExposer } from '../../utils/api';
 import { GsGifList } from '../giflist/gs-giflist';
+import * as d from '../../utils/definitions';
 
 @Component({
   styleUrls: ['./gs-gifsearch.scss', '../giflist/gs-giflist.scss'],
   tag: 'gs-gifsearch',
 })
 export class GsGifSearch {
-  private api: GiphyApiExposer;
+  private api: d.GiphyApiExposer;
   private page = 1;
   private shouldUpdateInitialList = true;
 

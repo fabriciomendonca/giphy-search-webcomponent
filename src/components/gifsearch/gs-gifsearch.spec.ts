@@ -1,5 +1,5 @@
 import { GsGifSearch } from './gs-gifsearch';
-import mocks from '../../utils/mocks.json';
+import mocks from '../../utils/__mocks__/mocks.json';
 
 describe('Main component', () => {
   let component;
@@ -88,8 +88,8 @@ describe('Main component', () => {
     const spy = jest
       .fn()
       .mockImplementation(() => Promise.resolve((<any>mocks).data));
-    
-    component.shouldUpdate = false;
+
+    component.shouldUpdateInitialList = false;
     component.componentWillLoad();
     component.api.getImages = spy;
     await component.loadImages();

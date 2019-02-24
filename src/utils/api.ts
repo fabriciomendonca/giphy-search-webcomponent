@@ -1,51 +1,7 @@
-import { ENDPOINTS } from './constants';
+import * as d from './definitions';
+import { apiService } from './service';
 
-export interface GifObject {}
-
-export interface GiphyApiGetOptions {
-  lang?: string;
-  limit?: number;
-  offset?: number;
-  rating?: string;
-}
-
-export interface GiphyApiService {
-  fetchImages: (
-    query: string,
-    options: GiphyApiGetOptions,
-  ) => Promise<GifObject[]>;
-}
-
-export interface GiphyApiExposer {
-  getImages: (
-    query: string,
-    options?: GiphyApiGetOptions,
-  ) => Promise<GifObject[]>;
-}
-
-const apiService: (apiKey: string) => GiphyApiService = (apiKey: string) => {
-  return {
-    async fetchImages(query, { lang, limit, offset, rating }) {
-      let endpoint = ENDPOINTS.SEARCH;
-
-      let response;
-      const params = `?api_key=${apiKey}&q=${encodeURIComponent(
-        query,
-      )}&limit=${limit}&offset=${offset}&rating=${rating}&lang=${lang}`;
-
-      try {
-        response = await fetch(endpoint + params);
-        response = await response.json();
-      } catch (err) {
-        throw err;
-      }
-
-      return response.data;
-    },
-  };
-};
-
-export const apiExposer: (apiKey: string) => GiphyApiExposer = (
+export const apiExposer: (apiKey: string) => d.GiphyApiExposer = (
   apiKey: string,
 ) => {
   const service = apiService(apiKey);
@@ -58,7 +14,7 @@ export const apiExposer: (apiKey: string) => GiphyApiExposer = (
         offset: 0,
         rating: 'g',
       },
-    ) {
+    ): Promise<d.GifObject[]> {
       if (!apiKey) {
         throw new Error(
           'You need a Giphy API Key, see https://developers.giphy.com/docs for details.',
