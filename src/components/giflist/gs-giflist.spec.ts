@@ -11,16 +11,13 @@ describe('Main component', () => {
     expect(component).toBeDefined();
   });
 
-  xit('renders an empty list', () => {
-    const vdata = component.render();
-
-    expect(vdata).toBeDefined();
-    expect(vdata.vtag).toBeUndefined;
+  it('renders an empty list', () => {
+    expect(component).toBe('');
   });
 
-  xit('renders a list with 3 elements', () => {
-    component.gifs = (<any>mocks).data;
-    const vdata = component.render();
+  it('renders a list with 3 elements', () => {
+    component = GsGifList({ gifs: (<any>mocks).data }, [], null);
+    const vdata = { ...component };
 
     const gifs = vdata.vchildren;
 
