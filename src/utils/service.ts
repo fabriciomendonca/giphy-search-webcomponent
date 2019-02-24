@@ -13,7 +13,7 @@ export const apiService: (apiKey: string) => d.GiphyApiService = (
       )}&limit=${limit}&offset=${offset}&rating=${rating}&lang=${lang}`;
 
       try {
-        response = await fetch(endpoint + params);
+        response = await window.fetch(endpoint + params);
         response = await response.json();
       } catch (err) {
         throw err;
